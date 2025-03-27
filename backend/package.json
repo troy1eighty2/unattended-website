@@ -14,6 +14,7 @@
     "nodemon": "*",
     "express": "*",
     "socket.io": "*",
-    "dotenv": "*"
+    "dotenv": "*",
+    "cors": "*"
   }
 }

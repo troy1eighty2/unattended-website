@@ -2,13 +2,20 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
+import cors from "cors";
 
 // express app
 const app = express();
+// for http requests
+app.use(cors())
 // http server
 const server = http.createServer(app);
 // websocket attach
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
 dotenv.config()
 
 io.on("connection", (socket) => {
@@ -24,9 +31,17 @@ io.on("connection", (socket) => {
   socket.on("error", (error) => {
     console.log(`Error: ${error} on ${socket.id}`)
   });
+  // receive frame as bytes object and convert into image
+  socket.on("frame", (data) => {
+    console.log("AI Camera Data")
+    io.emit("frame", data);
+  });
+  socket.on("thermal_frame", (data) => {
+    console.log("Thermal Camera Data")
+    io.emit("thermal_frame", data);
+  });
 });
 
 server.listen(process.env.PORT, () => {
   console.log(`Server running on ws://localhost:${process.env.PORT}`);
 });
-
