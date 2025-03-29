@@ -40,6 +40,10 @@ io.on("connection", (socket) => {
     console.log("Thermal Camera Data")
     io.emit("thermal_frame", data);
   });
+  socket.on("temp", (data) => {
+    console.log("Temp Data")
+    io.emit("temp", data);
+  });
 });
 
 server.listen(process.env.PORT, () => {
