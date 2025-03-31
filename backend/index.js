@@ -44,6 +44,10 @@ io.on("connection", (socket) => {
     console.log("Temp Data")
     io.emit("temp", data);
   });
+  socket.on("cpu_temp", (data) => {
+    console.log("Cpu Temp Data")
+    io.emit("cpu_temp", data);
+  });
 });
 
 server.listen(process.env.PORT, () => {
