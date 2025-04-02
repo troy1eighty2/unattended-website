@@ -48,6 +48,10 @@ io.on("connection", (socket) => {
     console.log("Cpu Temp Data")
     io.emit("cpu_temp", data);
   });
+  socket.on("uptime", (data) => {
+    console.log("uptime Data")
+    io.emit("uptime", data);
+  });
 });
 
 server.listen(process.env.PORT, () => {

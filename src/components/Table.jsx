@@ -1,5 +1,5 @@
 import styles from "./Table.module.css"
-function Table({ temp, humidity, cputemp }) {
+function Table({ temp, humidity, cputemp, uptime }) {
 
   return <>
     <div className={styles.container}>
@@ -22,7 +22,7 @@ function Table({ temp, humidity, cputemp }) {
         </div>
         <div className={styles.infoItem}>
           <div className={styles.itemHeader}>Uptime:</div>
-          <div className={styles.itemValue}>?</div>
+          <div className={styles.itemValue}>{uptime} secs</div>
         </div>
       </div>
     </div>
