@@ -14,12 +14,20 @@ const socketURL = "ws://localhost:3000"
 function App() {
   const [frame, setFrame] = useState("")
   const [temp, setTemp] = useState("")
+
   const [cputemp, setCpuTemp] = useState("")
   const [humidity, setHumidity] = useState("")
+  const [heatIndex, setHeatIndex] = useState("")
   const [emergency, setEmergency] = useState(false)
-  const [subjects, setSubjects] = useState(0)
+  const [subjects, setSubjects] = useState(null)
   const [motion, setMotion] = useState(false)
+  const [wifistrength, setWifiStrength] = useState(null)
   const [uptime, setUptime] = useState(null)
+  const [sysinfo, setSysInfo] = useState([])
+  const [history, setHistory] = useState([])
+
+  const [location, setLocation] = useState(null)
+  const [gpsstrength, setGPStrength] = useState(null)
 
   const [status, setStatus] = useState(true)
   const [capturedImages, setCapturedImages] = useState(null)
@@ -28,11 +36,12 @@ function App() {
     const socket = io(socketURL)
     socket.on("frame", (data) => {
       // console.log(data)
-      setFrame(data)
+      // setFrame(data)
     })
     socket.on("temp", (data) => {
       setTemp(data[0])
       setHumidity(data[1])
+      setHeatIndex(data[2])
     })
     socket.on("cpu_temp", (data) => {
       setCpuTemp(data)
@@ -40,8 +49,30 @@ function App() {
     })
     socket.on("uptime", (data) => {
       setUptime(data)
-      console.log(data)
 
+    })
+    socket.on("wifi_strength", (data) => {
+      setWifiStrength(data)
+
+    })
+    socket.on("detections", (data) => {
+      setSubjects(data)
+
+    })
+    socket.on("sys_info", (data) => {
+      setSysInfo(data)
+    })
+    socket.on("config", (data) => {
+      console.log(data)
+      setLocation(data[0])
+      setGPStrength(data[1])
+    })
+    socket.on("emergency", (data) => {
+      setEmergency(data)
+    })
+    socket.on("history", (data) => {
+      console.log(` history: ${data}`)
+      setHistory(data)
     })
 
     return () => {
@@ -51,7 +82,7 @@ function App() {
   }, [])
   return <>
     <div className={styles.ticker}>
-      <Ticker uptime={uptime}></Ticker>
+      <Ticker uptime={uptime} emergency={emergency}></Ticker>
     </div>
     <div className={styles.container}>
       <div className={styles.header}>
@@ -65,21 +96,21 @@ function App() {
         </div>
         <i>It's gonna be a hot one today</i>
         <div className={styles.status}>
-          <Status uptime={uptime}></Status>
+          <Status uptime={uptime} emergency={emergency}></Status>
         </div>
       </div>
       <div className={styles.dashboard}>
         <div className={styles.left}>
           <div className={styles.row1}>
             <div className={styles.appInfo}>
-              <AppInfo></AppInfo>
+              <AppInfo temp={temp} humidity={humidity} heatIndex={heatIndex} subjects={subjects} location={location} ></AppInfo>
             </div>
             <div className={styles.sysInfo}>
-              <SysInfo></SysInfo>
+              <SysInfo uptime={uptime} cputemp={cputemp} wifistrength={wifistrength} sysinfo={sysinfo} gpsstrength={gpsstrength}></SysInfo>
             </div>
           </div>
           <div className={styles.row2}>
-            <History></History>
+            {/* <History history={history}></History> */}
           </div>
         </div>
         <div className={styles.right}>
@@ -96,7 +127,7 @@ function App() {
       <div className={styles.footer}>
         Built by Troy, Theirry, Joel, and Jason
       </div>
-    </div>
+    </div >
   </>
 }
 

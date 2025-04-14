@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
   });
   // receive frame as bytes object and convert into image
   socket.on("frame", (data) => {
-    console.log("AI Camera Data")
+    // console.log("AI Camera Data")
     io.emit("frame", data);
   });
   socket.on("thermal_frame", (data) => {
@@ -51,6 +51,30 @@ io.on("connection", (socket) => {
   socket.on("uptime", (data) => {
     console.log("uptime Data")
     io.emit("uptime", data);
+  });
+  socket.on("wifi_strength", (data) => {
+    console.log(" wifiData")
+    io.emit("wifi_strength", data);
+  });
+  socket.on("detections", (data) => {
+    console.log("detections")
+    io.emit("detections", data);
+  });
+  socket.on("sys_info", (data) => {
+    console.log(`Sys Info: ${data}`)
+    io.emit("sys_info", data);
+  });
+  socket.on("config", (data) => {
+    console.log(`Config Info: ${data}`)
+    io.emit("config", data);
+  });
+  socket.on("emergency", (data) => {
+    console.log(`Emergency status updated: ${data}`)
+    io.emit("emergency", data);
+  });
+  socket.on("history", (data) => {
+    console.log(`History updated: ${data}`)
+    io.emit("history", data);
   });
 });
 
