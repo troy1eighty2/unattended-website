@@ -76,6 +76,10 @@ io.on("connection", (socket) => {
     console.log(`History updated: ${data}`)
     io.emit("history", data);
   });
+  socket.on("pictures", (data) => {
+    console.log(`pictures updated: ${data}`)
+    io.emit("pictures", data);
+  });
 });
 
 server.listen(process.env.PORT, () => {

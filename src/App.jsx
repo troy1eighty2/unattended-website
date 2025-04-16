@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect} from 'react'
 import styles from "./App.module.css"
 import { io } from 'socket.io-client'
 
@@ -9,9 +9,11 @@ import AppInfo from './components/AppInfo'
 import SysInfo from './components/SysInfo'
 import Ticker from './components/Ticker'
 import History from './components/History'
+import CapturedImages from './components/CapturedImages.jsx'
 
 const socketURL = "ws://localhost:3000"
 function App() {
+
   const [frame, setFrame] = useState("")
   const [temp, setTemp] = useState("")
 
@@ -25,6 +27,7 @@ function App() {
   const [uptime, setUptime] = useState(null)
   const [sysinfo, setSysInfo] = useState([])
   const [history, setHistory] = useState([])
+  const [pictures, setPictures] = useState([])
 
   const [location, setLocation] = useState(null)
   const [gpsstrength, setGPStrength] = useState(null)
@@ -33,10 +36,10 @@ function App() {
   const [capturedImages, setCapturedImages] = useState(null)
 
   useEffect(() => {
+    console.log("test")
     const socket = io(socketURL)
     socket.on("frame", (data) => {
-      // console.log(data)
-      // setFrame(data)
+      setFrame(data)
     })
     socket.on("temp", (data) => {
       setTemp(data[0])
@@ -74,6 +77,10 @@ function App() {
       console.log(` history: ${data}`)
       setHistory(data)
     })
+    socket.on("pictures", (data) => {
+      console.log(` pictures: ${data}`)
+      setPictures(data)
+    })
 
     return () => {
       console.log("Cleaning up WebSocket...");
@@ -110,7 +117,7 @@ function App() {
             </div>
           </div>
           <div className={styles.row2}>
-            {/* <History history={history}></History> */}
+            <History history={history}></History>
           </div>
         </div>
         <div className={styles.right}>
@@ -118,11 +125,7 @@ function App() {
         </div>
       </div>
       <div className={styles.capturedImages}>
-        <h4>Captured Images</h4>
-        <div className={styles.images}>
-          {capturedImages ? "map them jawns" : "Nothing to show"}
-        </div>
-
+          <CapturedImages pictures={pictures}></CapturedImages>
       </div>
       <div className={styles.footer}>
         Built by Troy, Theirry, Joel, and Jason
