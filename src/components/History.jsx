@@ -24,7 +24,7 @@ function History({ history }) {
               <p>{item.temperature_farenheit}</p>
               <p style={item.authorities ? {color:"green"}: {color:"red"}}>{item.authorities ? "True" : "False"}</p>
 
-              <p style={item.authorities ? {color:"green"}: {color:"red"}}>{item.resolved ? "True" : "False"}</p>
+              <p style={item.resolved ? {color:"green"}: {color:"red"}}>{item.resolved ? "True" : "False"}</p>
             </div>
           ))}
       </div>

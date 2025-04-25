@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
     io.emit("wifi_strength", data);
   });
   socket.on("detections", (data) => {
-    console.log("detections")
+    // console.log("detections")
     io.emit("detections", data);
   });
   socket.on("sys_info", (data) => {
@@ -79,6 +79,12 @@ io.on("connection", (socket) => {
   socket.on("pictures", (data) => {
     console.log(`pictures updated: ${data}`)
     io.emit("pictures", data);
+  });
+  socket.on("countdown", (data) => {
+    io.emit("countdown", data);
+  });
+  socket.on("abort", (data) => {
+    io.emit("pi_abort", data);
   });
 });
 

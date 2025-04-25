@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect, useRef} from 'react'
 import styles from "./App.module.css"
 import { io } from 'socket.io-client'
 
@@ -34,60 +34,96 @@ function App() {
 
   const [status, setStatus] = useState(true)
   const [capturedImages, setCapturedImages] = useState(null)
+  const [aborting, setAborting] = useState(false)
 
+  const [countdown, setCountDown] = useState(null)
+  const socket = useRef(null);
+
+
+  const handleClick = () => {
+    setAborting(true)
+    socket.current.emit("abort", true);
+    setTimeout(() => {
+      setAborting(false)
+      setCountDown(0)
+      setEmergency(false)
+      
+    }, 5000);
+  }
   useEffect(() => {
     console.log("test")
-    const socket = io(socketURL)
-    socket.on("frame", (data) => {
+    socket.current = io(socketURL)
+    socket.current.on("frame", (data) => {
       setFrame(data)
     })
-    socket.on("temp", (data) => {
+    socket.current.on("temp", (data) => {
       setTemp(data[0])
       setHumidity(data[1])
       setHeatIndex(data[2])
     })
-    socket.on("cpu_temp", (data) => {
+    socket.current.on("cpu_temp", (data) => {
       setCpuTemp(data)
 
     })
-    socket.on("uptime", (data) => {
+    socket.current.on("uptime", (data) => {
       setUptime(data)
 
     })
-    socket.on("wifi_strength", (data) => {
+    socket.current.on("wifi_strength", (data) => {
       setWifiStrength(data)
 
     })
-    socket.on("detections", (data) => {
+    socket.current.on("detections", (data) => {
       setSubjects(data)
 
     })
-    socket.on("sys_info", (data) => {
+    socket.current.on("sys_info", (data) => {
       setSysInfo(data)
     })
-    socket.on("config", (data) => {
+    socket.current.on("config", (data) => {
       console.log(data)
       setLocation(data[0])
       setGPStrength(data[1])
     })
-    socket.on("emergency", (data) => {
+    socket.current.on("emergency", (data) => {
       setEmergency(data)
     })
-    socket.on("history", (data) => {
+    socket.current.on("history", (data) => {
       console.log(` history: ${data}`)
       setHistory(data)
     })
-    socket.on("pictures", (data) => {
+    socket.current.on("pictures", (data) => {
       console.log(` pictures: ${data}`)
       setPictures(data)
+    })
+    socket.current.on("countdown", (data) => {
+      setCountDown(data)
     })
 
     return () => {
       console.log("Cleaning up WebSocket...");
-      socket.disconnect(); // Close WebSocket connection
+      socket.current.disconnect(); // Close WebSocket connection
     };
   }, [])
   return <>
+    {(countdown > 0 || aborting || (countdown === 0 && emergency)) && (
+      <div className={styles.countdown}>
+        {aborting ? (
+          <button className={styles.abort} disabled>
+          🔒 Shutting down...
+          </button>
+          ) : countdown > 0 ? (
+          <button className={styles.abort} onClick={handleClick}>
+          ⚠️ Abort Calling 911 in {countdown}s ⚠️
+          </button>
+          ) : (
+          <button className={styles.alert} disabled>
+          🚓 Authorities Contacted
+          </button>
+        )}
+      </div>
+    )}
+
     <div className={styles.ticker}>
       <Ticker uptime={uptime} emergency={emergency}></Ticker>
     </div>
